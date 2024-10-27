@@ -1,0 +1,24 @@
+SELECT			
+co.country,			
+SUM(p.amount) AS total_income,  -- calculate the total revenue for each country			
+COUNT(DISTINCT cu.customer_id) AS customer_count,  -- count the number of unique customers per country			
+ROUND((SUM(p.amount) / (SELECT SUM(p2.amount) FROM payment p2) * 100), 2) AS revenue_percentage  -- calculate and round percentage of total revenue			
+FROM			
+rental r			
+INNER JOIN			
+payment p ON r.rental_id = p.rental_id			
+INNER JOIN			
+inventory i ON r.inventory_id = i.inventory_id			
+INNER JOIN			
+customer cu ON r.customer_id = cu.customer_id			
+INNER JOIN			
+address a ON cu.address_id = a.address_id			
+INNER JOIN			
+city ci ON a.city_id = ci.city_id			
+INNER JOIN			
+country co ON ci.country_id = co.country_id			
+GROUP BY			
+co.country  -- group by country only			
+ORDER BY			
+total_income DESC, customer_count DESC			
+limit 10;			

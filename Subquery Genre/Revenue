@@ -1,0 +1,20 @@
+SELECT	
+c.name AS category_name,	
+SUM(p.amount) AS total_income  -- calculate the total revenue for each category	
+FROM	
+rental r	
+INNER JOIN	
+payment p ON r.rental_id = p.rental_id	
+INNER JOIN	
+inventory i ON r.inventory_id = i.inventory_id	
+INNER JOIN	
+film f ON f.film_id = i.film_id	
+INNER JOIN	
+film_category fc ON f.film_id = fc.film_id	
+INNER JOIN	
+category c ON c.category_id = fc.category_id	
+GROUP BY	
+c.name  -- group by category name	
+ORDER BY	
+total_income DESC  -- order by highest total income, can be changed to ASC to get lowest	
+LIMIT 25;	

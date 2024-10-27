@@ -1,0 +1,59 @@
+SELECT		
+CASE		
+#NAME?		
+WHEN co.country IN ('Thailand', 'Indonesia', 'Bangladesh', 'Cambodia', 'Sri Lanka', 'Brunei',		
+'South Korea', 'India', 'Iran', 'Vietnam', 'Israel', 'Malaysia',		
+'Kazakhstan', 'Kuwait', 'Hong Kong', 'Japan', 'Philippines', 'Iraq',		
+'Turkey', 'Pakistan', 'China', 'Armenia', 'Russian Federation',		
+'Azerbaijan', 'Afghanistan', 'Myanmar', 'Yemen', 'Nepal', 'Taiwan',		
+'Turkmenistan', 'North Korea')		
+THEN 'Asia'		
+		
+#NAME?		
+WHEN co.country IN ('Faroe Islands', 'Italy', 'Czech Republic', 'Sweden', 'United Kingdom',		
+'Germany', 'Liechtenstein', 'Latvia', 'Holy See (Vatican City State)',		
+'Greece', 'Finland', 'Ukraine', 'Estonia', 'Slovakia', 'France',		
+'Austria', 'Switzerland', 'Hungary', 'Belarus', 'Netherlands',		
+'Romania', 'Spain', 'Lithuania', 'Bulgaria', 'Poland', 'Moldova',		
+'Portugal', 'Yugoslavia')		
+THEN 'Europe'		
+		
+#NAME?		
+WHEN co.country IN ('Virgin Islands, U.S.', 'Dominican Republic', 'Canada', 'American Samoa',		
+'Anguilla', 'Saint Vincent and the Grenadines', 'Puerto Rico',		
+'United States', 'Mexico', 'Greenland', 'French Guiana')		
+THEN 'North America'		
+		
+#NAME?		
+WHEN co.country IN ('Venezuela', 'Colombia', 'Argentina', 'Chile', 'Peru', 'Ecuador',		
+'Paraguay', 'Brazil', 'Bolivia')		
+THEN 'South America'		
+		
+#NAME?		
+WHEN co.country IN ('Cameroon', 'Congo, The Democratic Republic of the', 'Algeria',		
+'Gambia', 'South Africa', 'Senegal', 'Kenya', 'Zambia', 'Madagascar',		
+'Nigeria', 'Mozambique', 'Ethiopia', 'Angola', 'Morocco', 'Sudan',		
+'Tunisia', 'Malawi', 'Tanzania', 'Chad', 'Egypt', 'Reunion')		
+THEN 'Africa'		
+		
+#NAME?		
+WHEN co.country IN ('French Polynesia', 'Nauru', 'Tuvalu', 'Australia', 'New Zealand', 'Tonga')		
+THEN 'Oceania'		
+		
+#NAME?		
+WHEN co.country IN ('Oman', 'Saudi Arabia', 'Bahrain', 'United Arab Emirates', 'Iraq')		
+THEN 'Middle East'		
+		
+-- Others (if any countries don't fit into any of the continents above)		
+ELSE 'Unknown'		
+END AS continent,		
+SUM(p.amount) AS total_paid,		
+ROUND((SUM(p.amount) / (SELECT SUM(p2.amount) FROM payment p2) * 100), 2) AS revenue_percentage  -- calculate and round percentage of total revenue		
+FROM customer c		
+INNER JOIN address a ON c.address_id = a.address_id		
+INNER JOIN city ci ON a.city_id = ci.city_id		
+INNER JOIN country co ON ci.country_id = co.country_id		
+INNER JOIN rental r ON r.customer_id = c.customer_id		
+INNER JOIN payment p ON r.rental_id = p.rental_id		
+GROUP BY continent		
+ORDER BY total_paid DESC;		
